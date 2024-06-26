@@ -3,10 +3,12 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"slices"
 	"strings"
 )
@@ -33,20 +35,62 @@ func panicIf(err error) {
 	}
 }
 
+func exists(name string) bool {
+	var err error
+
+	_, err = os.Stat(name)
+
+	return !errors.Is(err, os.ErrNotExist)
+}
+
+func dataDir() string {
+	const dirName string = "cmenu"
+
+	var dir string
+
+	dir = os.Getenv("XDG_DATA_HOME")
+	if dir != "" {
+		return filepath.Join(dir, dirName)
+	}
+
+	dir = os.Getenv("HOME")
+	if dir != "" {
+		return filepath.Join(dir, ".local", "share", dirName)
+	}
+
+	panic(errors.New("$HOME is empty"))
+}
+
 func jsonFile() *os.File {
 	var (
-		f   *os.File
-		err error
+		f              *os.File
+		name, dataFile string
+		err            error
 	)
 
 	if len(os.Args) == 2 {
 		return os.Stdin
 	}
 
-	f, err = os.Open(os.Args[2])
-	exitIf(err)
+	name = os.Args[2]
+	if exists(name) {
+		f, err = os.Open(name)
+		exitIf(err)
 
-	return f
+		return f
+	}
+
+	dataFile = filepath.Join(dataDir(), name)
+	if exists(dataFile) {
+		f, err = os.Open(dataFile)
+		exitIf(err)
+
+		return f
+	}
+
+	exit(fmt.Errorf("%s: file does not exist", name))
+
+	return nil
 }
 
 func jsonCmds() map[string]string {
