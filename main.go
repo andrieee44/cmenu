@@ -143,7 +143,7 @@ func keyMenu(keys []string) string {
 	panicIf(cmd.Err)
 	exitIf(cmd.Run())
 
-	return buf.String()
+	return strings.TrimSuffix(buf.String(), "\n")
 }
 
 func main() {
@@ -165,5 +165,5 @@ func main() {
 		exit(fmt.Errorf("%s is not a valid key", key))
 	}
 
-	fmt.Print(val)
+	fmt.Println(val)
 }
