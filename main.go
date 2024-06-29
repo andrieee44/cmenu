@@ -43,8 +43,17 @@ func exists(name string) bool {
 	var err error
 
 	_, err = os.Stat(name)
+	if err == nil {
+		return true
+	}
 
-	return !errors.Is(err, os.ErrNotExist)
+	if errors.Is(err, os.ErrNotExist) {
+		return false
+	}
+
+	exit(err)
+
+	return false
 }
 
 func dataDir() string {
