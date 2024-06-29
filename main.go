@@ -39,12 +39,6 @@ func exitIf(err error) {
 	}
 }
 
-func panicIf(err error) {
-	if err != nil {
-		panic(fmt.Errorf("cmenu: %s", err))
-	}
-}
-
 func exists(name string) bool {
 	var err error
 
@@ -111,7 +105,7 @@ func jsonCmds() map[string]string {
 
 	f = jsonFile()
 	exitIf(json.NewDecoder(f).Decode(&cmds))
-	panicIf(f.Close())
+	exitIf(f.Close())
 
 	return cmds
 }
@@ -140,7 +134,7 @@ func keyMenu(keys []string) string {
 	cmd = exec.Command("/bin/sh", "-c", "--", os.Args[1])
 	cmd.Stdin = strings.NewReader(strings.Join(keys, "\n"))
 	cmd.Stdout = &buf
-	panicIf(cmd.Err)
+	exitIf(cmd.Err)
 	exitIf(cmd.Run())
 
 	return strings.TrimSuffix(buf.String(), "\n")
