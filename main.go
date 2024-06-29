@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -25,6 +24,7 @@ example: echo '{"key":"value"}' | cmenu fzf
 cmenu pipes all keys to MENU.
 MENU must output a valid key.
 cmenu only outputs the chosen value.`)
+
 	os.Exit(1)
 }
 
@@ -68,7 +68,7 @@ func dataDir() string {
 		return filepath.Join(dir, ".local", "share", dirName)
 	}
 
-	panic(errors.New("$HOME is empty"))
+	panic(errors.New("cmenu: $HOME is empty"))
 }
 
 func jsonFile() *os.File {
@@ -109,7 +109,6 @@ func jsonCmds() map[string]string {
 		f    *os.File
 	)
 
-	cmds = make(map[string]string)
 	f = jsonFile()
 	exitIf(json.NewDecoder(f).Decode(&cmds))
 	panicIf(f.Close())
@@ -127,13 +126,9 @@ func cmdsKeys(cmds map[string]string) []string {
 		keys = append(keys, k)
 	}
 
-	return keys
-}
-
-func keyReader(keys []string) io.Reader {
 	slices.Sort(keys)
 
-	return strings.NewReader(strings.Join(keys, "\n"))
+	return keys
 }
 
 func keyMenu(keys []string) string {
@@ -142,13 +137,13 @@ func keyMenu(keys []string) string {
 		buf bytes.Buffer
 	)
 
-	cmd = exec.Command("/bin/sh", "-c", os.Args[1])
-	cmd.Stdin = keyReader(keys)
+	cmd = exec.Command("/bin/sh", "-c", "--", os.Args[1])
+	cmd.Stdin = strings.NewReader(strings.Join(keys, "\n"))
 	cmd.Stdout = &buf
 	panicIf(cmd.Err)
 	exitIf(cmd.Run())
 
-	return strings.TrimSuffix(buf.String(), "\n")
+	return buf.String()
 }
 
 func main() {
@@ -170,5 +165,5 @@ func main() {
 		exit(fmt.Errorf("%s is not a valid key", key))
 	}
 
-	fmt.Println(val)
+	fmt.Print(val)
 }
