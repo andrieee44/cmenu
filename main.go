@@ -76,7 +76,7 @@ func dataDir() string {
 
 func jsonFile() *os.File {
 	var (
-		f              *os.File
+		file           *os.File
 		name, dataFile string
 		err            error
 	)
@@ -87,18 +87,18 @@ func jsonFile() *os.File {
 
 	name = os.Args[2]
 	if exists(name) {
-		f, err = os.Open(name)
+		file, err = os.Open(name)
 		exitIf(err)
 
-		return f
+		return file
 	}
 
 	dataFile = filepath.Join(dataDir(), name)
 	if exists(dataFile) {
-		f, err = os.Open(dataFile)
+		file, err = os.Open(dataFile)
 		exitIf(err)
 
-		return f
+		return file
 	}
 
 	exit(fmt.Errorf("%s: file does not exist", name))
@@ -109,12 +109,12 @@ func jsonFile() *os.File {
 func jsonCmds() map[string]string {
 	var (
 		cmds map[string]string
-		f    *os.File
+		file *os.File
 	)
 
-	f = jsonFile()
-	exitIf(json.NewDecoder(f).Decode(&cmds))
-	exitIf(f.Close())
+	file = jsonFile()
+	exitIf(json.NewDecoder(file).Decode(&cmds))
+	exitIf(file.Close())
 
 	return cmds
 }
@@ -122,11 +122,11 @@ func jsonCmds() map[string]string {
 func cmdsKeys(cmds map[string]string) []string {
 	var (
 		keys []string
-		k    string
+		key  string
 	)
 
-	for k = range cmds {
-		keys = append(keys, k)
+	for key = range cmds {
+		keys = append(keys, key)
 	}
 
 	slices.Sort(keys)
