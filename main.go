@@ -39,10 +39,10 @@ func exitIf(err error) {
 	}
 }
 
-func exists(name string) bool {
+func exists(path string) bool {
 	var err error
 
-	_, err = os.Stat(name)
+	_, err = os.Stat(path)
 	if err == nil {
 		return true
 	}
@@ -77,7 +77,7 @@ func dataDir() string {
 func jsonFile() *os.File {
 	var (
 		file           *os.File
-		name, dataFile string
+		path, dataFile string
 		err            error
 	)
 
@@ -85,15 +85,15 @@ func jsonFile() *os.File {
 		return os.Stdin
 	}
 
-	name = os.Args[2]
-	if exists(name) {
-		file, err = os.Open(name)
+	path = os.Args[2]
+	if exists(path) {
+		file, err = os.Open(path)
 		exitIf(err)
 
 		return file
 	}
 
-	dataFile = filepath.Join(dataDir(), name)
+	dataFile = filepath.Join(dataDir(), path)
 	if exists(dataFile) {
 		file, err = os.Open(dataFile)
 		exitIf(err)
@@ -101,7 +101,7 @@ func jsonFile() *os.File {
 		return file
 	}
 
-	exit(fmt.Errorf("%s: file does not exist", name))
+	exit(fmt.Errorf("%s: file does not exist", path))
 
 	return nil
 }
