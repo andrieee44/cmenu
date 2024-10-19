@@ -71,7 +71,7 @@ func dataDir() string {
 		return filepath.Join(dir, ".local", "share", dirName)
 	}
 
-	panic(errors.New("cmenu: $HOME is empty"))
+	return filepath.Join(dir, "." + dirName)
 }
 
 func jsonFile() *os.File {
