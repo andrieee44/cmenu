@@ -13,18 +13,7 @@ import (
 )
 
 func help() {
-	fmt.Fprintln(os.Stderr, `usage: cmenu MENU [FILE]
-
-cmenu wraps MENU to choose from JSON object in FILE.
-if no FILE, read from STDIN.
-FILE must have key value pairs of type string.
-
-example: echo '{"key":"value"}' | cmenu fzf
-
-cmenu pipes all keys to MENU.
-MENU must output a valid key.
-cmenu only outputs the chosen value.`)
-
+	fmt.Fprintln(os.Stderr, "usage: cmenu <MENU> [<FILE>]")
 	os.Exit(1)
 }
 

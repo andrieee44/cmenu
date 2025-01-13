@@ -1,0 +1,28 @@
+.TH CMENU 1
+.SH NAME
+cmenu \- clipboard menu wrapper
+.SH SYNOPSIS
+.B cmenu
+.IR "MENU " [ FILE ]
+.SH DESCRIPTION
+.B cmenu
+is a clipboard menu wrapper, originally designed to work with
+.IR fzf (1).
+.B cmenu
+wraps
+.I MENU
+to choose from JSON key\-value entries of type string in
+.I FILE
+or standard input.
+.B cmenu
+pipes all keys to
+.I MENU
+which must then output a valid key.
+.B cmenu
+then outputs the value associated with the key.
+.SH EXAMPLE
+.B $ echo '{\\[dq]key\\[dq]:\\[dq]value\\[dq]}' | cmenu fzf
+.SH SEE ALSO
+.IR fzf (1)
+.SH AUTHOR
+andrieee44 (andrieee44@gmail.com)
