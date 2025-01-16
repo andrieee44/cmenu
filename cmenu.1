@@ -21,7 +21,11 @@ which must then output a valid key.
 .B cmenu
 then outputs the value associated with the key.
 .SH EXAMPLE
-.B $ echo '{\(dqkey\(dq:\(dqvalue\(dq}' | cmenu fzf
+.TP
+Create a single entry clipboard:
+.EX
+.B $ echo \(aq{\(dqkey\(dq:\(dqvalue\(dq}\(aq | cmenu fzf
+.EE
 .SH SEE ALSO
 .IR fzf (1)
 .SH AUTHOR
