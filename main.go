@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+
+	"github.com/adrg/xdg"
 )
 
 func help() {
@@ -45,24 +47,6 @@ func exists(path string) bool {
 	return false
 }
 
-func dataDir() string {
-	const dirName string = "cmenu"
-
-	var dir string
-
-	dir = os.Getenv("XDG_DATA_HOME")
-	if dir != "" {
-		return filepath.Join(dir, dirName)
-	}
-
-	dir = os.Getenv("HOME")
-	if dir != "" {
-		return filepath.Join(dir, ".local", "share", dirName)
-	}
-
-	return filepath.Join(dir, "."+dirName)
-}
-
 func jsonFile() *os.File {
 	var (
 		file           *os.File
@@ -82,7 +66,7 @@ func jsonFile() *os.File {
 		return file
 	}
 
-	dataFile = filepath.Join(dataDir(), path)
+	dataFile = filepath.Join(xdg.DataHome, "cmenu", path)
 	if exists(dataFile) {
 		file, err = os.Open(dataFile)
 		exitIf(err)
